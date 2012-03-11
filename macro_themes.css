@@ -1,0 +1,42 @@
+
+/* This file contains starter definitions for macro_themes themes. The
+   module does not include this file; you should copy it to your theme
+   and modify as necessary */
+
+div.inline-image img.framed {
+  border: 1px solid #ccc;
+}
+
+div.inline-image.left, span.inline-left {
+  margin: 0 15px 15px 0;
+  float: left;
+}
+
+div.inline-image.center {
+  margin: 0 auto 10px;
+}
+
+div.inline-image.right, span.inline-right {
+  float: right;
+  margin: 0 0 15px 15px;
+}
+
+div.inline-image span {
+  display: block;
+  margin-top: 5px;
+  line-height: 1.3em;
+  font-size: 0.9em;
+}
+
+/* The width attribute for the [image] macro recognizes either words
+   or numbers. Numbers are interpreted as pixel widths. Words are
+   interpreted as class names, allowing you to define pre-set widths
+*/
+
+div.inline-image.half, div.inline-image.half img {
+  width: 50%;
+}
+
+div.inline-image.third, div.inline-image.third img {
+  width: 33%;
+}

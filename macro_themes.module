@@ -1,0 +1,132 @@
+<?php
+
+/**
+ * Implementation of hook_init().
+ */
+function macro_themes_init() {
+
+  /* Check global theme settings to see if we should include our css. Setting this on a theme-specific
+     basis is not possible, since at this point the theme may not be set.
+  */
+  $include_css = 1;
+  if( ($settings = variable_get('theme_settings', array())) && isset($settings['macro_themes_include_css']) ) {
+    $include_css = $settings['macro_themes_include_css'];
+  }
+
+  if( $include_css ) {
+	drupal_add_css(drupal_get_path('module', 'macro_themes') . '/macro_themes.css');
+  }
+}
+
+/**
+ * Implementation of hook_form_alter().
+ */
+function macro_themes_form_system_theme_settings_alter(&$form, $form_state) {
+
+  include_once(drupal_get_path('module', 'macro_themes') . '/macro_themes.inc');
+  _macro_themes_form_system_theme_settings_alter($form);
+}
+
+function macro_themes_theme() {
+
+  return array(
+    'macro_image' => array(
+	  'arguments' => array('image' => null, 'caption' => '', 'params' => ''),
+	  'file' => 'macro_themes.inc',
+	),
+	'macro_youtube' => array(
+	  'arguments' => array('key' => 'UrOGXMDVVt4', 'params' => ''),
+	  'template' => 'macro.youtube',
+	),
+	'macro_flickr' => array(
+	  'arguments' => array('url' => '', 'params' => ''),
+	  'template' => 'macro.flickr',
+	),
+	'macro_slideshare' => array(
+	  'arguments' => array('key' => '', 'params' => ''),
+	  'template' => 'macro.slideshare',
+	),
+	'macro_vimeo' => array(
+	  'arguments' => array('key' => '', 'params' => ''),
+	  'template' => 'macro.vimeo',
+	),
+  );
+}
+
+/* macro_themes_setting: get a default setting, similar to theme_get_setting
+   
+   Note that macro_themes options are stored in the theme_settings variable, and
+   depends on the behavior of system_theme_settings to store variables in the theme_settings
+   array (or theme_theme_name_settings).
+
+   $macro_name: name of macro you need settings for:  youtube, flickr, etc. Pass null to get raw settings
+*/
+
+function macro_themes_settings($macro_name) {
+  static $settings, $values=array();
+
+  if( $macro_name && $values[$macro_name] ) {
+    return $values;
+  }
+
+  if( empty($settings) ) {
+	$settings = macro_themes_default_settings($theme_key);
+  }
+
+  if( ! $macro_name ) {
+    return $settings;
+  }
+
+  $key = 'macro_themes_' . $macro_name . '_';
+  foreach($settings as $name => $value) {
+	if( substr($name,0,strlen($key)) == $key ) {
+	  $param = substr($name,strlen($key));
+	  $default[$param] = $value;
+	}
+  }
+
+  $values[$macro_name] = $default;
+  return $default;
+}
+
+function macro_themes_default_settings($key) {
+  $defaults = array(
+	'macro_themes_include_css' => 1, /* Note: this is only recognized and stored at the global level */
+
+	'macro_themes_flickr_width' => 400,
+
+	'macro_themes_vimeo_width' => 500,
+
+	'macro_themes_slideshare_width' => 500,
+
+	'macro_themes_image_max_width' => 500,
+	'macro_themes_image_framed' => 'yes',
+	'macro_themes_image_align' => 'none',
+	'macro_themes_image_imagecache' => '',
+
+	'macro_themes_youtube_width_normal' => 425,
+	'macro_themes_youtube_width_wide' => 480,
+	'macro_themes_youtube_ratio' => 'normal',
+  );
+
+  return array_merge($defaults, theme_get_settings($key));
+}
+
+function macro_themes_params($str, $args = array(), $params = array()) {
+
+  foreach($args as $key => $pattern) {
+    if( preg_match("/\b$key=($pattern)\b/i", $str, $_matches) ) {
+      $params[strtolower($key)] = $_matches[1];
+    }
+  }
+
+  return $params;
+}
+
+function _macro_themes_id_safe($string) {
+  if (is_numeric($string{0})) {
+    // if the first character is numeric, add 'n' in front
+    $string = 'n'. $string;
+  }
+  return strtolower(preg_replace('/[^a-zA-Z0-9-]+/', '-', $string));
+}
