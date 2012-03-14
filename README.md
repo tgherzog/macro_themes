@@ -7,11 +7,11 @@ themes via the built-in input filter, or through your own code.
 The input filter translates "macros" into rich media. For instance, the following
 macro will insert a Youtube video:
 
-[youtube http://www.youtube.com/watch?v=tQzbPStmboM]
+    [youtube http://www.youtube.com/watch?v=tQzbPStmboM]
 
 or simply:
 
-[youtube tQzbPStmboM]
+    [youtube tQzbPStmboM]
 
 
 ## Installation & Configuration ##
@@ -36,7 +36,7 @@ displayed.
 
 The image macro works like this:
 
-[image imagename.png options Your Caption Here]
+    [image imagename.png options Your Caption Here]
 
 The image macro displays static image files such as GIF, JPG and PNG images. Absolute and
 relative URLs are both supported. Unqualified paths are assumed to be relative to the
@@ -72,32 +72,33 @@ to display in a popup implemented with the [Facebox](http://defunkt.io/facebox) 
 
 #### Examples ####
 
-[image cloud.png align=right]
+Embed an image from the file system directory, aligned right:
 
-Embed an image from the file system directory, aligned right
+    [image cloud.png align=right]
 
-[image http://images.foo.org/cloud.png]
+Embed an image on another website:
 
-Embed an image on another website
+    [image http://images.foo.org/cloud.png]
 
-[image cloud.png width=300]
+Embed an image scaled to 300px:
 
-Embed an image scaled to 300px
+    [image cloud.png width=300]
 
-[image cloud.png width=third align=left]
+Embed a left-aligned image, one third the content width (as defined by your CSS):
 
-Embed a left-aligned image, one third the content width (as defined by your CSS)
+    [image cloud.png width=third align=left]
+
 
 
 ### [youtube] ###
 
 Youtube video macros look like this:
 
-[youtube http://www.youtube.com/watch?v=tQzbPStmboM options]
+    [youtube http://www.youtube.com/watch?v=tQzbPStmboM options]
 
 or simply:
 
-[youtube tQzbPStmboM options]
+    [youtube tQzbPStmboM options]
 
 Optional options are:
 
@@ -112,11 +113,11 @@ should match the video you are embedding.
 
 Vimeo video macros are similar:
 
-[vimeo http://vimeo.com/38164075 options]
+    [vimeo http://vimeo.com/38164075 options]
 
 or simply:
 
-[vimeo 38164075 options]
+    [vimeo 38164075 options]
 
 Optional options are:
 
@@ -128,7 +129,7 @@ Optional options are:
 
 Display Flickr photosets like this:
 
-[flickr http://www.flickr.com/photos/timherzog/sets/72157624346396031 options]
+    [flickr http://www.flickr.com/photos/timherzog/sets/72157624346396031 options]
 
 Optional options are:
 
