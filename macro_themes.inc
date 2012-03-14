@@ -16,7 +16,7 @@
  * div.inline-image.third, div.inline-image.third img { width: 200px; }
  *
  */
-function theme_macro_image($image, $caption, $params) {
+function theme_macro_image($image, $params, $caption) {
   $defaults = macro_themes_settings('image');
   $args = macro_themes_params($params,
 	array('width' => '\w+', 'imagecache' => '[\w\-]+', 'align' => 'none|left|right|center', 'framed' => 'yes|no', 'id' => '\w+', 'map' => '\w+', 'popup' => 'yes|no', 'nid' => '\d+'),
@@ -34,10 +34,10 @@ function theme_macro_image($image, $caption, $params) {
   }
 
   $img_attributes = array();
-  if( substr($image, 0, 5) == 'http:' ) {
+  if( substr($image,0,5) == 'http:' || substr($image,0,6) == 'https:' ) {
     $local = false;
   }
-  elseif( substr($image, 0, 1) == '/' ) {
+  elseif( substr($image,0,1) == '/' ) {
     // must add host name so theme_image doesn't screw up the path
 	global $base_root;
 	$image = "$base_root$image";

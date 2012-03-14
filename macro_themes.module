@@ -31,7 +31,7 @@ function macro_themes_theme() {
 
   return array(
     'macro_image' => array(
-	  'arguments' => array('image' => null, 'caption' => '', 'params' => ''),
+	  'arguments' => array('image' => null, 'params' => '', 'caption' => ''),
 	  'file' => 'macro_themes.inc',
 	),
 	'macro_youtube' => array(
@@ -112,6 +112,39 @@ function macro_themes_default_settings($key) {
   return array_merge($defaults, theme_get_settings($key));
 }
 
+function macro_themes_filter($op, $delta=0, $format=-1, $text='', $cache_id=0) {
+
+  switch($op) {
+    case 'list':
+	  return array(0 => t('Macro Themes'));
+
+    case 'description':
+	  return t('Add text macros for many common multimedia content types.');
+
+	case 'settings':
+	  $form['filter_macro_themes'] = array(
+	    '#type' => 'fieldset',
+		'#title' => t('Macro Themes'),
+		'#description' => t('Select the macro replacements you wish to enable.'),
+		'#collapsible' => TRUE,
+	  );
+
+	  foreach(array('image', 'flickr', 'youtube', 'vimeo', 'slideshare') as $key) {
+	    $form['filter_macro_themes']["macro_themes_filter_{$key}_$format"] = array(
+		  '#type' => 'checkbox',
+		  '#title' => "[$key]",
+		  '#default_value' => variable_get("macro_themes_filter_{$key}_$format", 1),
+		);
+	  }
+	  return $form;
+
+	case 'process':
+	  return _macro_themes_markup($text, $format);
+    default:
+	  return $text;
+  }
+}
+
 function macro_themes_params($str, $args = array(), $params = array()) {
 
   foreach($args as $key => $pattern) {
@@ -129,4 +162,44 @@ function _macro_themes_id_safe($string) {
     $string = 'n'. $string;
   }
   return strtolower(preg_replace('/[^a-zA-Z0-9-]+/', '-', $string));
+}
+
+function _macro_themes_markup($text, $format) {
+ 
+  $tpl = array(
+    'image' => '#(<p>)?\[image\s+([^\]\s]+)\s*((\w+=[\w\-]+\s*)*)([^\]]*)\](</p>)?#i',
+	'youtube' => '#(<p>)?\[youtube\s+(http://www.youtube.com/watch\?v=)?([\w\-]+)\s*([^\]]*)?\](</p>)?#i',
+	'vimeo' => '#(<p>)?\[vimeo\s+(http://(www.)?vimeo.com/)?([\w\-]+)\s*([^\]]*)?\](</p>)?#i',
+	'flickr' => '#(<p>)?\[flickr\s+http://(www\.)?flickr\.com(/[^\]\s]+)\s*([^\]]*)?\](</p>)?#i',
+	'slideshare' => '#(<p>)?\[slideshare\s+id=(\w+).+?doc=([\w\-]+)\s*([^\]]*)?\](</p>)?#i',
+  );
+
+  foreach($tpl as $key => $regex) {
+    if( variable_get("macro_themes_filter_{$key}_$format", 1) ) {
+	  drupal_set_message('macro_theme filter on ' . $key);
+	  $text = preg_replace_callback($regex, "_macro_themes_markup_callback_{$key}", $text);
+	}
+  }
+
+  return $text;
+}
+
+function _macro_themes_markup_callback_image($matches) {
+  return theme('macro_image', $matches[2], $matches[3], $matches[5]);
+}
+
+function _macro_themes_markup_callback_youtube($matches) {
+  return theme('macro_youtube', $matches[3], $matches[4]);
+}
+
+function _macro_themes_markup_callback_vimeo($matches) {
+  return theme('macro_vimeo', $matches[4], $matches[5]);
+}
+
+function _macro_themes_markup_callback_flickr($matches) {
+  return theme('macro_flickr', $matches[3], $matches[4]);
+}
+
+function _macro_themes_markup_callback_slideshare($matches) {
+  return theme('macro_slideshare', $matches[3], $matches[4]);
 }

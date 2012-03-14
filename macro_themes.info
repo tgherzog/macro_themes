@@ -2,4 +2,3 @@ name = Macro Themes
 project = Macro Themes
 description = Implement themes for commonly used input macros
 core=6.x
-package="WRI"
