@@ -176,7 +176,6 @@ function _macro_themes_markup($text, $format) {
 
   foreach($tpl as $key => $regex) {
     if( variable_get("macro_themes_filter_{$key}_$format", 1) ) {
-	  drupal_set_message('macro_theme filter on ' . $key);
 	  $text = preg_replace_callback($regex, "_macro_themes_markup_callback_{$key}", $text);
 	}
   }
